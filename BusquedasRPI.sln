@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusquedasRPI", "BusquedasRPI.csproj", "{D130BA4F-E053-4F90-93EF-BFDF259D2B17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D130BA4F-E053-4F90-93EF-BFDF259D2B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D130BA4F-E053-4F90-93EF-BFDF259D2B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D130BA4F-E053-4F90-93EF-BFDF259D2B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D130BA4F-E053-4F90-93EF-BFDF259D2B17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4EFF681-457E-4DD7-B128-B3BDFE43B8AA}
+	EndGlobalSection
+EndGlobal

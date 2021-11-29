@@ -1,0 +1,114 @@
+@using BusquedasRPI.Models
+
+<h2 class="content-block">B&uacute;squedas</h2>
+
+<div class="content-block">
+    <div class="searchContainer">
+        <div class="searchElement">
+            Expediente:
+            <input type="text" class="searchText" />
+        </div>
+        <div class="searchElement">
+            Recibo:
+            <input type="text" class="searchText" />
+        </div>
+    </div>
+
+    <div class="searchContainer">
+        <div class="searchElementFull">
+            Clase:
+            <select multiple class="searchSelect">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="5">6</option>
+                <option value="6">7</option>
+                <option value="7">8</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="searchContainer">
+        <div class="searchElementFull">
+            <table style="width:100%">
+                <tr>
+                    <td style="width:95%">
+                        Texto a buscar:
+                        <input type="text" class="searchTextMain" />
+                    </td>
+                    <td style="padding-left:5px">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Exacto
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    <input type="checkbox" class="searchCheckbox" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding-left:5px">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Titular
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    <input type="checkbox" class="searchCheckbox" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+            </table>
+            
+        </div>
+    </div>
+
+    <div class="searchContainer">
+        <div class="searchElementFull">
+            <button class="searchButton" onclick="alert('Hacer busqueda')">
+                Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="searchContainer">
+        <div class="searchElementFull">
+            @(Html.DevExtreme().DataGrid<Marca>()
+                .ElementAttr(new { @class = "dx-card wide-card" })
+                .DataSource(d => d.Mvc().Controller("MarcaData").LoadAction("Get").Key("Id"))
+                .ShowBorders(false)
+                .FilterRow(f => f.Visible(true))
+                .FocusedRowEnabled(true)
+                .FocusedRowIndex(0)
+                .ColumnAutoWidth(true)
+                .ColumnHidingEnabled(true)
+                .Columns(columns => {
+                    columns.AddFor(m => m.Id);
+                    columns.AddFor(m => m.ExpedienteId);
+                    columns.AddFor(m => m.TipoDeMarca);
+                    columns.AddFor(m => m.Denominacion);
+                })
+                .Paging(p => p.PageSize(10))
+                .Pager(p => p
+                    .ShowPageSizeSelector(true)
+                    .AllowedPageSizes(new[] { 5, 10, 20 })
+                    .ShowInfo(true)
+                )
+            )
+
+        </div>
+    </div>
+</div>
+
+
+
