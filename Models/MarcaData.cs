@@ -109,6 +109,12 @@ namespace BusquedasRPI.Models
                 ExpedienteId = "12345789",
                 TipoDeMarca = "1",
                 Denominacion = "Prueba 11"
+            },
+            new Marca {
+                Id = "99",
+                ExpedienteId = "999999",
+                TipoDeMarca = "1",
+                Denominacion = "Prueba 99"
             }
         };
     }
