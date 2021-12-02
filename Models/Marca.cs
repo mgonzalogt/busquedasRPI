@@ -11,5 +11,8 @@ namespace BusquedasRPI.Models
         public string ExpedienteId { get; set; }
         public string TipoDeMarca { get; set; }
         public string Denominacion { get; set; }
+        public string Traduccion { get; set; }
+        public string Registro { get; set; }
+        public string UltimaRenovacion { get; set; }
     }
 }

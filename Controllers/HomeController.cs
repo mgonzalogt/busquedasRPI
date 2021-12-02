@@ -13,8 +13,9 @@ namespace BusquedasRPI.Controllers
             return View();
         }
 
-        public IActionResult About() {
-            return View();
+        public string Welcome()
+        {
+            return "This is the Welcome action method...";
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

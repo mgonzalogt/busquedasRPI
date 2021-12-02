@@ -36,7 +36,7 @@
                 <tr>
                     <td style="width:95%">
                         Texto a buscar:
-                        <input type="text" class="searchTextMain" />
+                        @Html.TextBox("fldSearchText", null, new { @class = "searchTextMain" })
                     </td>
                     <td style="padding-left:5px">
                         <table style="width:100%">
@@ -69,13 +69,13 @@
                 </tr>
 
             </table>
-            
+
         </div>
     </div>
 
     <div class="searchContainer">
         <div class="searchElementFull">
-            <button class="searchButton" onclick="alert('Hacer busqueda')">
+            <button class="searchButton" name="button" asp-action="Test" value="hey!">
                 Buscar
             </button>
         </div>
