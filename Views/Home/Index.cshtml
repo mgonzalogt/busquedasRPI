@@ -36,7 +36,7 @@
                 <tr>
                     <td style="width:95%">
                         Texto a buscar:
-                        @Html.TextBox("fldSearchText", null, new { @class = "searchTextMain" })
+                        @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain" })
                     </td>
                     <td style="padding-left:5px">
                         <table style="width:100%">
@@ -75,7 +75,7 @@
 
     <div class="searchContainer">
         <div class="searchElementFull">
-            <button class="searchButton" name="button" asp-action="Test" value="hey!">
+            <button class="searchButton" name="button" onclick="$('#searchGrid').dxDataGrid('instance').refresh()">
                 Buscar
             </button>
         </div>
@@ -84,8 +84,15 @@
     <div class="searchContainer">
         <div class="searchElementFull">
             @(Html.DevExtreme().DataGrid<Marca>()
+                .ID("searchGrid")
                 .ElementAttr(new { @class = "dx-card wide-card" })
-                .DataSource(d => d.Mvc().Controller("MarcaData").LoadAction("Get").Key("Id"))
+                .DataSource(d => 
+                    d.Mvc()
+                    .Controller("MarcaData")
+                    .LoadAction("Get")
+                    .Key("Id")
+                    .LoadParams(new { searchText = new JS("function() { return $('#fldSearchText').val() }") })
+                )
                 .ShowBorders(false)
                 .FilterRow(f => f.Visible(true))
                 .FocusedRowEnabled(true)
@@ -93,15 +100,15 @@
                 .ColumnAutoWidth(true)
                 .ColumnHidingEnabled(true)
                 .Columns(columns => {
-                    columns.AddFor(m => m.Id);
+                    columns.AddFor(m => m.No);
                     columns.AddFor(m => m.ExpedienteId);
                     columns.AddFor(m => m.TipoDeMarca);
                     columns.AddFor(m => m.Denominacion);
                 })
-                .Paging(p => p.PageSize(10))
+                .Paging(p => p.PageSize(20))
                 .Pager(p => p
                     .ShowPageSizeSelector(true)
-                    .AllowedPageSizes(new[] { 5, 10, 20 })
+                    .AllowedPageSizes(new[] { 5, 10, 20, 50 })
                     .ShowInfo(true)
                 )
             )

@@ -27,38 +27,44 @@ namespace BusquedasRPI.Controllers
         }
 
         [HttpGet]
-        public object Get(DataSourceLoadOptions loadOptions)
+        public object Get(DataSourceLoadOptions loadOptions, String searchText)
         {
             List<Marca> marcas = new();
 
-            string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
-            SqlConnection cnn;
-            cnn = new SqlConnection(connetionString);
-            cnn.Open();
-            try
+            if (searchText != null && searchText.Trim() != "" && searchText.Trim().Length > 2)
             {
-                SqlCommand command = cnn.CreateCommand();
-                command.CommandText = "SELECT TOP 50 * FROM Marcas WHERE Denominacion LIKE 'peps%'";
-                SqlDataReader result = command.ExecuteReader();
-                
-                while (result.Read())
+                string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
+                SqlConnection cnn;
+                cnn = new SqlConnection(connetionString);
+                cnn.Open();
+                try
                 {
-                    Marca el = new();
-                    el.Id = result["Id"].ToString();
-                    el.ExpedienteId = result["ExpedienteId"].ToString();
-                    el.TipoDeMarca = result["TipoDeMarca"].ToString();
-                    el.Denominacion = result["Denominacion"].ToString();
-                    el.Traduccion = result["Traduccion"].ToString();
-                    el.Registro = result["Registro"].ToString();
-                    el.UltimaRenovacion = result["UltimaRenovacion"].ToString();
-                    marcas.Add(el);
+                    SqlCommand command = cnn.CreateCommand();
+                    command.CommandText = "SELECT TOP 50 * FROM Marcas WHERE Denominacion LIKE '%" + searchText.Trim() + "%'";
+                    SqlDataReader result = command.ExecuteReader();
+
+                    int cnt = 1;
+                    while (result.Read())
+                    {
+                        Marca el = new();
+                        el.No = cnt.ToString();
+                        el.Id = result["Id"].ToString();
+                        el.ExpedienteId = result["ExpedienteId"].ToString();
+                        el.TipoDeMarca = result["TipoDeMarca"].ToString();
+                        el.Denominacion = result["Denominacion"].ToString();
+                        el.Traduccion = result["Traduccion"].ToString();
+                        el.Registro = result["Registro"].ToString();
+                        el.UltimaRenovacion = result["UltimaRenovacion"].ToString();
+                        marcas.Add(el);
+                        cnt++;
+                    }
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                cnn.Close();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            cnn.Close();
 
             return DataSourceLoader.Load(marcas, loadOptions);
         }

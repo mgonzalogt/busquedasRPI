@@ -7,6 +7,7 @@ namespace BusquedasRPI.Models
 {
     public class Marca
     {
+        public string No { get; set; }
         public string Id { get; set; }
         public string ExpedienteId { get; set; }
         public string TipoDeMarca { get; set; }
