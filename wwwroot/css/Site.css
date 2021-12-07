@@ -171,14 +171,23 @@ body, html {
 }
 
 .searchContainer {
-    width:100%;
-    
+    width:100%; 
 }
 
 .searchElement {
     width: 50%;
     float: left;
     padding: 5px;
+}
+
+.searchContainerIcon {
+    width: 100%;
+    padding-top:20px;
+}
+
+.searchElementIcon {
+    float: right;
+    padding: 10px;
 }
 
 .searchElementFull {
@@ -188,11 +197,11 @@ body, html {
 }
 
 .searchText {
-    width:100%;
-    height:30px;
-    font-size:20px;
-    border:1px solid #cccccc;
-    padding:3px;
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    border: 1px solid #cccccc;
+    padding: 5px;
 }
 
 .searchTextMain {
@@ -201,6 +210,7 @@ body, html {
     font-size: 20px;
     border: 1px solid #cccccc;
     padding: 5px;
+    background-color: #feffbd;
 }
 
 .searchSelect {
@@ -215,9 +225,20 @@ body, html {
     border: 1px solid #cccccc;
 }
 
-.searchButton {
+.searchButtonMain {
     width: 100%;
-    height: 30px;
+    height: 50px;
+    font-size: 18px;
+    border: 1px solid #FAFAFA;
+    background-color: #59abff;
+    color: #FAFAFA;
+    cursor:pointer;
+}
+
+.searchButtonDetalle {
+    width: 100%;
+    height: 50px;
     font-size: 15px;
     border: 1px solid #cccccc;
+    cursor: pointer;
 }

@@ -27,7 +27,7 @@ namespace BusquedasRPI.Controllers
         }
 
         [HttpGet]
-        public object Get(DataSourceLoadOptions loadOptions, String searchText)
+        public object SearchMarcas(DataSourceLoadOptions loadOptions, String searchText)
         {
             List<Marca> marcas = new();
 

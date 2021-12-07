@@ -6,27 +6,94 @@
     <div class="searchContainer">
         <div class="searchElement">
             Expediente:
-            <input type="text" class="searchText" />
+            @Html.TextBox("fldExpediente", "", new { @class = "searchText" })
         </div>
         <div class="searchElement">
             Recibo:
-            <input type="text" class="searchText" />
+            @Html.TextBox("fldRecibo", "", new { @class = "searchText" })
         </div>
     </div>
 
     <div class="searchContainer">
         <div class="searchElementFull">
-            Clase:
-            <select multiple class="searchSelect">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="5">6</option>
-                <option value="6">7</option>
-                <option value="7">8</option>
-            </select>
+            <table style="width:100%">
+                <tr>
+                    <td style="width:95%">
+                        Detalle de clase:
+                        @Html.TextBox("fldSearchTextDetalle", "", new { @class = "searchText", @placeholder = @Html.DisplayName("Buscar clases por detalle") })
+                    </td>
+                    <td style="padding-left:5px" valign="middle">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    <button class="searchButtonDetalle" name="buttonSearchDetalle" onclick="doSearchDetalle();">
+                                        Buscar
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+    </div>
+
+    <div class="searchContainer">
+        <div class="searchElementFull">
+            Clasificaci&oacute;n de Niza:
+            @(Html.DevExtreme().DataGrid<ClasificacionNiza>()
+                .ID("classesGrid")
+                .DataSource(d =>
+                    d.Mvc()
+                    .Controller("ClasificacionNiza")
+                    .LoadAction("GetClasificacion")
+                    .Key("Id")
+                    .LoadParams(new
+                    {
+                        searchText = new JS("function() { " +
+                        " " +
+                        "return $('#fldSearchTextDetalle').val() " +
+                    "}")
+                    })
+                )
+                .ShowBorders(true)
+                .Selection(s => {
+                    s.Mode(SelectionMode.Multiple);
+                    s.ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always);
+                    s.SelectAllMode(SelectAllMode.AllPages);
+                } )
+                .NoDataText("[ No existen clases para el criterio de busqueda ingresado ]")
+                .OnInitialized("doSelectAll")
+                .FilterRow(f => f.Visible(true))
+                .FocusedRowEnabled(true)
+                .ColumnAutoWidth(true)
+                .ColumnHidingEnabled(true)
+                .Columns(columns => {
+                    columns.AddFor(m => m.Descripcion).Caption("Clase");
+                })
+                .Paging(p => p.PageSize(5))
+                .Pager(p => p
+                    .ShowPageSizeSelector(true)
+                    .AllowedPageSizes(new[] { 5, 10, 25, 50 })
+                    .ShowInfo(true)
+                    .InfoText("Pagina {0} de {1} ({2} registros) ")
+                )
+                .MasterDetail(md => {
+                    md.Enabled(true);
+                    md.Template(@<text>
+                        <div><%- data.Detalle %></div>
+                    </text>);
+                })
+            )
+
         </div>
     </div>
 
@@ -36,7 +103,21 @@
                 <tr>
                     <td style="width:95%">
                         Texto a buscar:
-                        @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain" })
+                        @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain", @placeholder = @Html.DisplayName("Texto a buscar en marcas o titulares") })
+                    </td>
+                    <td style="padding-left:5px">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Fon&eacute;tica
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.RadioButton("fldSearchType", "0", new { @id = "fldSearchFonetica", @class = "searchCheckbox", @checked = "checked" })
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td style="padding-left:5px">
                         <table style="width:100%">
@@ -47,7 +128,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align:center">
-                                    <input type="checkbox" class="searchCheckbox" />
+                                    @Html.RadioButton("fldSearchType", "1", new { @id = "fldSearchExacto", @class = "searchCheckbox" })
                                 </td>
                             </tr>
                         </table>
@@ -61,7 +142,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align:center">
-                                    <input type="checkbox" class="searchCheckbox" />
+                                    @Html.RadioButton("fldSearchType", "2", new { @id = "fldSearchTitular", @class = "searchCheckbox" })
                                 </td>
                             </tr>
                         </table>
@@ -75,9 +156,26 @@
 
     <div class="searchContainer">
         <div class="searchElementFull">
-            <button class="searchButton" name="button" onclick="$('#searchGrid').dxDataGrid('instance').refresh()">
-                Buscar
+            <button class="searchButtonMain" name="buttonSearch" onclick="doSearch();">
+                BUSCAR
             </button>
+        </div>
+    </div>
+
+    <div class="searchContainerIcon">
+        <div class="searchElementIcon">
+            @(Html.DevExtreme().Button()
+                .Icon("export")
+                .Text("Excel")
+                .OnClick("exportToExcel")
+            )
+        </div>
+        <div class="searchElementIcon">
+            @(Html.DevExtreme().Button()
+                .Icon("exportpdf")
+                .Text("PDF")
+                .OnClick("exportToPDF")
+            )
         </div>
     </div>
 
@@ -85,37 +183,92 @@
         <div class="searchElementFull">
             @(Html.DevExtreme().DataGrid<Marca>()
                 .ID("searchGrid")
-                .ElementAttr(new { @class = "dx-card wide-card" })
-                .DataSource(d => 
+                .DataSource(d =>
                     d.Mvc()
                     .Controller("MarcaData")
-                    .LoadAction("Get")
+                    .LoadAction("SearchMarcas")
                     .Key("Id")
-                    .LoadParams(new { searchText = new JS("function() { return $('#fldSearchText').val() }") })
+                    .LoadParams(new { searchText = new JS("function() { " +
+                        " " +
+                        "return $('#fldSearchText').val() " +
+                    "}") })
                 )
-                .ShowBorders(false)
+                .ShowBorders(true)
+                .Selection(s => {
+                    s.Mode(SelectionMode.Multiple);
+                    s.ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always);
+                } )
+                .NoDataText("[ Ingrese algunos criterios validos busqueda ]")
                 .FilterRow(f => f.Visible(true))
                 .FocusedRowEnabled(true)
-                .FocusedRowIndex(0)
                 .ColumnAutoWidth(true)
                 .ColumnHidingEnabled(true)
                 .Columns(columns => {
-                    columns.AddFor(m => m.No);
-                    columns.AddFor(m => m.ExpedienteId);
-                    columns.AddFor(m => m.TipoDeMarca);
-                    columns.AddFor(m => m.Denominacion);
+                    columns.AddFor(m => m.No).Caption("#").Width(50);
+                    columns.AddFor(m => m.TipoDeMarca).Caption("Clase").Width(75);
+                    columns.AddFor(m => m.ExpedienteId).Caption("Expediente").Width(100);
+                    columns.AddFor(m => m.Denominacion).Caption("Denominacion");
                 })
-                .Paging(p => p.PageSize(20))
+                .Paging(p => p.PageSize(25))
                 .Pager(p => p
                     .ShowPageSizeSelector(true)
-                    .AllowedPageSizes(new[] { 5, 10, 20, 50 })
+                    .AllowedPageSizes(new[] { 5, 10, 25, 50 })
                     .ShowInfo(true)
+                    .InfoText("Pagina {0} de {1} ({2} registros) ")
                 )
             )
 
         </div>
     </div>
 </div>
+
+<script>
+    function doSearch() {
+        var clases = $("#classesGrid").dxDataGrid("instance");
+        var selectedClases = clases.getSelectedRowsData();
+        console.log(selectedClases);
+        console.log($(":radio[name=fldSearchType]:checked").val());
+
+        $('#searchGrid').dxDataGrid('instance').refresh();
+    }
+
+    function doSearchDetalle() {
+        $('#classesGrid').dxDataGrid('instance').refresh();
+    }
+
+    function doSelectAll(e) {
+        e.component.selectAll();
+    }
+
+    function exportToExcel() {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Marcas');
+        var dataGrid = $("#searchGrid").dxDataGrid("instance");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: dataGrid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Marcas.xlsx');
+            });
+        });
+        e.cancel = true;
+    }
+
+    function exportToPDF() {
+        var doc = new jsPDF();
+        var dataGrid = $("#searchGrid").dxDataGrid("instance");
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: dataGrid
+        }).then(function () {
+            doc.save("Marcas.pdf");
+        });
+    }
+</script>
 
 
 
