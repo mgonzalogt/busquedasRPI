@@ -1,18 +1,8 @@
-@using BusquedasRPI.Models
+﻿@using BusquedasRPI.Models
 
-<h2 class="content-block">B&uacute;squedas</h2>
+<h2 class="content-block">B&uacute;squedas P&uacute;blicas</h2>
 
 <div class="content-block">
-    <div class="searchContainer">
-        <div class="searchElement">
-            Expediente:
-            @Html.TextBox("fldExpediente", "", new { @class = "searchText" })
-        </div>
-        <div class="searchElement">
-            Recibo:
-            @Html.TextBox("fldRecibo", "", new { @class = "searchText" })
-        </div>
-    </div>
 
     <div class="searchContainer">
         <div class="searchElementFull">
@@ -119,23 +109,9 @@
                             </tr>
                         </table>
                     </td>
-                    <td style="padding-left: 5px;">
-                        <table style="width:100%">
-                            <tr>
-                                <td style="text-align:center">
-                                    Titular
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "2", new { @id = "fldSearchTitular", @class = "searchCheckbox" })
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
                     <td style="padding-left: 10px; width: 95%;">
                         &nbsp;
-                        @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain", @placeholder = @Html.DisplayName("Texto a buscar en marcas o titulares") })
+                        @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain", @placeholder = @Html.DisplayName("Texto a buscar en marcas") })
                     </td>
                 </tr>
 
@@ -153,13 +129,6 @@
     </div>
 
     <div class="searchContainerIcon">
-        <div class="searchElementIcon">
-            @(Html.DevExtreme().Button()
-                .Icon("xlsxfile")
-                .Text("Excel")
-                .OnClick("exportToExcel")
-            )
-        </div>
         <div class="searchElementIcon">
             @(Html.DevExtreme().Button()
                 .Icon("exportpdf")
@@ -207,7 +176,6 @@
                     columns.AddFor(m => m.Registro).Caption("Registro").Width(100);
                     columns.AddFor(m => m.ExpedienteId).Caption("Expediente").Width(100);
                     columns.AddFor(m => m.Denominacion).Caption("Denominacion");
-                    columns.AddFor(m => m.TitularNombre).Caption("Titular").GroupIndex(0);
                 })
                 .Paging(p => p.PageSize(25))
                 .Pager(p => p
@@ -238,8 +206,7 @@
     $(document).ready(function () {
         $('#fldSearchTextDetalle').keypress(function (e) {
             var key = (e.keyCode ? e.keyCode : e.which);
-            if (key == '13')
-            {
+            if (key == '13') {
                 doSearchDetalle();
                 return false;
             }
@@ -282,27 +249,6 @@
 
     function doSearchDetalle() {
         $('#classesGrid').dxDataGrid('instance').refresh();
-    }
-
-    function doSelectAll(e) {
-        e.component.selectAll();
-    }
-
-    function exportToExcel() {
-        var workbook = new ExcelJS.Workbook();
-        var worksheet = workbook.addWorksheet('Marcas');
-        var dataGrid = $("#searchGrid").dxDataGrid("instance");
-
-        DevExpress.excelExporter.exportDataGrid({
-            component: dataGrid,
-            worksheet: worksheet,
-            autoFilterEnabled: true
-        }).then(function () {
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Marcas.xlsx');
-            });
-        });
-        e.cancel = true;
     }
 
     function exportToPDF() {

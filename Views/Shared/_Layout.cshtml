@@ -84,10 +84,16 @@
                 @(Html.DevExtreme().TreeView()
                 .Items(items => {
                     items.Add()
-                        .Text("Inicio")
+                        .Text("Internas")
                         .Icon("home")
                         .Option("path", GetUrl("Index"))
                         .Selected(IsCurrentUrl("Index"));
+
+                    items.Add()
+                        .Text("Publicas")
+                        .Icon("globe")
+                        .Option("path", GetUrl("Public"))
+                        .Selected(IsCurrentUrl("Public"));
 
                     items.Add()
                         .Text("Acerca de")

@@ -29,7 +29,7 @@ namespace BusquedasRPI.Controllers
             String vSearchCondition = "";
             if (vSearchText.Trim() != "")
             {
-                vSearchCondition = "AND Detalle LIKE '%" + vSearchText + "%'";
+                vSearchCondition = "AND N.Detalle LIKE '%" + vSearchText + "%'";
             }
 
             string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
@@ -39,11 +39,11 @@ namespace BusquedasRPI.Controllers
             try
             {
                 SqlCommand command = cnn.CreateCommand();
-                command.CommandText = "SELECT * " +
-                    "FROM ClassificacionDeNiza " +
+                command.CommandText = "SELECT * FROM vwNiza N " +
                     "WHERE 1=1" + 
                     vSearchCondition + 
-                    "ORDER BY Id ASC";
+                    "ORDER BY N.Id ASC";
+
                 SqlDataReader result = command.ExecuteReader();
 
 
