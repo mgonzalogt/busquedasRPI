@@ -2,7 +2,7 @@
 
 <h2 class="content-block">B&uacute;squedas P&uacute;blicas</h2>
 
-<div class="content-block">
+<div class="content-block pSearch">
 
     <div class="searchContainer">
         <div class="searchElementFull">
@@ -251,6 +251,21 @@
         $('#classesGrid').dxDataGrid('instance').refresh();
     }
 
+    function addWaterMark(doc) {
+        var totalPages = doc.internal.getNumberOfPages();
+
+        for (i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setTextColor('#C0C0C0');
+            doc.setFontSize(75);
+            doc.saveGraphicsState();
+            doc.setGState(new doc.GState({ opacity: 0.5 }));
+            doc.text((doc.internal.pageSize.width / 2) - 30, (doc.internal.pageSize.height / 2) + 30, 'NO OFICIAL', null, 45);
+        }
+
+        return doc;
+    }
+
     function exportToPDF() {
         var doc = new jsPDF();
         var dataGrid = $("#searchGrid").dxDataGrid("instance");
@@ -259,6 +274,7 @@
             jsPDFDocument: doc,
             component: dataGrid
         }).then(function () {
+            doc = addWaterMark(doc);
             doc.save("Marcas.pdf");
         });
     }

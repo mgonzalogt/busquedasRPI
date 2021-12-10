@@ -9,6 +9,7 @@ using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
 
 using Microsoft.Extensions.Configuration;
+using BusquedasRPI.Utilities;
 
 namespace BusquedasRPI.Controllers
 {
@@ -29,7 +30,7 @@ namespace BusquedasRPI.Controllers
             String vSearchCondition = "";
             if (vSearchText.Trim() != "")
             {
-                vSearchCondition = "AND N.Detalle LIKE '%" + vSearchText + "%'";
+                vSearchCondition = "AND N.Detalle LIKE @SearchText ";
             }
 
             string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
@@ -39,10 +40,12 @@ namespace BusquedasRPI.Controllers
             try
             {
                 SqlCommand command = cnn.CreateCommand();
-                command.CommandText = "SELECT * FROM vwNiza N " +
-                    "WHERE 1=1" + 
+                String tableName = "vwNiza";
+                command.CommandText = String.Format("SELECT * FROM {0} N " +
+                    "WHERE 1=1 " + 
                     vSearchCondition + 
-                    "ORDER BY N.Id ASC";
+                    "ORDER BY N.Id ASC", tableName);
+                command.Parameters.Add("@SearchText", System.Data.SqlDbType.Text).Value = "%" + SearchFunctions.CleanString(vSearchText) + "%";
 
                 SqlDataReader result = command.ExecuteReader();
 

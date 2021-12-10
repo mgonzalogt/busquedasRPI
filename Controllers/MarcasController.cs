@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using BusquedasRPI.Utilities;
 
 namespace BusquedasRPI.Controllers
 { 
@@ -45,11 +46,12 @@ namespace BusquedasRPI.Controllers
                 try
                 {
                     SqlCommand command = cnn.CreateCommand();
+                    String tableName = "vwBusquedas";
 
                     String classCondition = "";
                     if (vSearchParams.Classes != null && vSearchParams.Classes.Trim() != "")
                     {
-                        classCondition = "AND B.ClaseId IN (" + vSearchParams.Classes + ") ";
+                        classCondition = "AND B.ClaseId IN ({1}) ";
                     }
 
                     String searchCondition = "";
@@ -57,20 +59,21 @@ namespace BusquedasRPI.Controllers
                     {
                         if (vSearchParams.Type == "0" || vSearchParams.Type == "1")
                         {
-                            searchCondition = "AND B.Denominacion LIKE '%" + vSearchParams.Text.Trim() + "%' ";
+                            searchCondition = "AND B.Denominacion LIKE @SearchText ";
                         }
 
                         if (vSearchParams.Type == "2")
                         {
-                            searchCondition = "AND B.TitularNombre LIKE '%" + vSearchParams.Text.Trim() + "%' ";
+                            searchCondition = "AND B.TitularNombre LIKE @SearchText ";
                         }
 
                     }
 
-                    command.CommandText = "SELECT TOP 500 * FROM vwBusquedas B " +
+                    command.CommandText = String.Format("SELECT TOP 500 * FROM {0} B " +
                         "WHERE 1=1 " +
                         searchCondition +
-                        classCondition;
+                        classCondition, tableName, SearchFunctions.CleanString(vSearchParams.Classes));
+                    command.Parameters.Add("@SearchText", System.Data.SqlDbType.Text).Value = "%" + SearchFunctions.CleanString(vSearchParams.Text.Trim()) + "%";
 
                     SqlDataReader result = command.ExecuteReader();
                     while (result.Read())

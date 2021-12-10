@@ -4,13 +4,34 @@
 
 <div class="content-block">
     <div class="searchContainer">
-        <div class="searchElement">
-            Expediente:
-            @Html.TextBox("fldExpediente", "", new { @class = "searchText" })
-        </div>
-        <div class="searchElement">
-            Recibo:
-            @Html.TextBox("fldRecibo", "", new { @class = "searchText" })
+        <div class="searchElementFull">
+            <table style="width:100%">
+                <tr>
+                    <td style="width:95%">
+                        Expediente:
+                        @Html.TextBox("fldExpediente", "", new { @class = "searchText", @placeholder = @Html.DisplayName("Obtener datos por expediente") })
+                    </td>
+                    <td style="padding-left:5px" valign="middle">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    <button class="searchButtonDetalle" name="buttonExpediente" onclick="getClassByExpedienteId();">
+                                        Buscar
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                </tr>
+
+            </table>
+
         </div>
     </div>
 
@@ -252,6 +273,14 @@
                 return false;
             }
         });
+
+        $('#fldExpediente').keypress(function (e) {
+            var key = (e.keyCode ? e.keyCode : e.which);
+            if (key == '13') {
+                getClassByExpedienteId();
+                return false;
+            }
+        });
     });
 
     function classesToList(selectedClasses) {
@@ -286,6 +315,49 @@
 
     function doSelectAll(e) {
         e.component.selectAll();
+    }
+
+    function doClearSelectionGrid(grid) {
+        var dataGrid = $("#" + grid).dxDataGrid("instance");
+        dataGrid.clearSelection();
+    }
+
+    function doSelectClassesGrid(id) {
+        var dataGrid = $("#classesGrid").dxDataGrid("instance");
+        //Default Servicios and Senal de Publicidad
+        dataGrid.selectRows([1,47,id]);
+    }
+
+    function resetSelections() {
+        $("#fldSearchText").val('');
+        doClearSelectionGrid('classesGrid');
+        $('#fldSearchExacto').prop('checked', false);
+        $('#fldSearchTitular').prop('checked', false);
+        $('#fldSearchFonetica').prop('checked', true);
+    }
+
+    function getClassByExpedienteId() {
+        var vExpedienteId = $("#fldExpediente").val().trim();
+
+        //Reset selections
+        resetSelections();
+
+        $.ajax({
+            type: "Get",
+            url: "/Expediente/GetMarcaByExpedienteId?expedienteId=" + vExpedienteId,
+            success: function (data) {
+                if (data && data.Id) {
+                    var vDenominacion = String(data.Denominacion).trim();
+                    var vClase = String(data.Clase).trim();
+
+                    $("#fldSearchText").val(vDenominacion);
+                    doSelectClassesGrid(vClase);
+                }
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
     }
 
     function exportToExcel() {
