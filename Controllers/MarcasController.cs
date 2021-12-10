@@ -57,11 +57,13 @@ namespace BusquedasRPI.Controllers
                     String searchCondition = "";
                     if (vSearchParams.Text != null && vSearchParams.Text.Trim() != "")
                     {
+                        //Foneticas y Exactas
                         if (vSearchParams.Type == "0" || vSearchParams.Type == "1")
                         {
                             searchCondition = "AND B.Denominacion LIKE @SearchText ";
                         }
 
+                        //Titular
                         if (vSearchParams.Type == "2")
                         {
                             searchCondition = "AND B.TitularNombre LIKE @SearchText ";
