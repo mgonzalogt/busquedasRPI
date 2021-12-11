@@ -158,7 +158,7 @@
                         <table style="width:100%">
                             <tr>
                                 <td style="text-align:center">
-                                    Todas
+                                    Completo
                                 </td>
                             </tr>
                             <tr>
@@ -168,7 +168,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td style="padding-left: 5px;">
+                    <td style="padding-left: 5px; display:none;" id="parcialContainer">
                         <table style="width:100%">
                             <tr>
                                 <td style="text-align:center">
@@ -310,6 +310,29 @@
                 return false;
             }
         });
+
+        $('#fldSearchFonetica').click(function (e) {
+            if ($('#fldSearchFonetica').is(":checked")) {
+                $('#parcialContainer').show();
+                $('#fldSearchSubstrings').prop('checked', false);
+            }
+        });
+
+        $('#fldSearchExacto').click(function (e) {
+            if ($('#fldSearchExacto').is(":checked")) {
+                $('#parcialContainer').hide();
+                $('#fldSearchSubstrings').prop('checked', false);
+            }
+        });
+
+        $('#fldSearchTitular').click(function (e) {
+            if ($('#fldSearchTitular').is(":checked")) {
+                $('#parcialContainer').hide();
+                $('#fldSearchSubstrings').prop('checked', false);
+            }
+        });
+
+        
     });
 
     function classesToList(selectedClasses) {
@@ -341,18 +364,34 @@
         var classes = $("#classesGrid").dxDataGrid("instance");
         var selectedClasses = classes.getSelectedRowsData();
         var selectedType = $(":radio[name=fldSearchType]:checked").val();
+        var selectedSubstrings = $("#fldSearchSubstrings").is(":checked");
+        var warningMessage = "";
+        var vReturn = {};
+        vReturn.valid = true;
+        vReturn.warning = "";
 
-        //foneticas y no clases
-        if (selectedType == '0' && selectedClasses.length == 0) {
-            return false;
+        //foneticas y no clases (all classes)
+        if (selectedType == '0' && (selectedClasses.length == 0 || selectedClasses.length == 47)) {
+            warningMessage = warningMessage + "\n- Busqueda fonetica sobre todas las clases.";
         }
 
-        return true;
+        //Substrings
+        if (selectedSubstrings) {
+            warningMessage = warningMessage + "\n- Buscar subpalabras parciales.";
+        }
+
+        vReturn.valid = $.trim(warningMessage) == '';
+        if ($.trim(warningMessage) != '') {
+            vReturn.warning = "\nRazones por las que su consulta podria demorar:\n" + warningMessage;
+        }
+
+        return vReturn;
     }
 
     function doSearch() {
-        if (!validateSearch()) {
-            if (confirm('Las busquedas foneticas sobre todas las clases puede tardar algunos segundos. \nDesea continuar?')) {
+        var validation = validateSearch();
+        if (!validation.valid) {
+            if (confirm(validation.warning + '\n\nDesea continuar?')) {
                 disableSearchButton();
                 $('#searchGrid').dxDataGrid('instance').refresh();
             }
@@ -397,6 +436,7 @@
         $('#fldSearchExacto').prop('checked', true);
         $('#fldSearchAll').prop('checked', true);
         $('#fldSearchSubstrings').prop('checked', false);
+        $('#parcialContainer').hide();
     }
 
     function getClassByExpedienteId() {

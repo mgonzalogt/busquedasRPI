@@ -113,7 +113,7 @@
                         <table style="width:100%">
                             <tr>
                                 <td style="text-align:center">
-                                    Todas
+                                    Completo
                                 </td>
                             </tr>
                             <tr>
@@ -267,7 +267,7 @@
         var selectedType = $(":radio[name=fldSearchType]:checked").val();
 
         //foneticas y no clases
-        if (selectedType == '0' && selectedClasses.length == 0) {
+        if (selectedType == '0' && (selectedClasses.length == 0 || selectedClasses.length == 47)) {
             return false;
         }
 

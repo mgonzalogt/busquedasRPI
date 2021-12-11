@@ -35,7 +35,7 @@ namespace BusquedasRPI.Controllers
             {
                 SqlCommand command = cnn.CreateCommand();
                 String tableName = "vwBusquedas";
-                command.CommandText = String.Format("SELECT * FROM {0} WHERE ExpedienteId = @ExpedienteId", tableName);
+                command.CommandText = String.Format("SELECT * FROM {0} WITH (NOLOCK) WHERE ExpedienteId = @ExpedienteId", tableName);
                 command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.Int).Value = SearchFunctions.CleanString(expedienteId);
 
                 SqlDataReader result = command.ExecuteReader();

@@ -39,6 +39,7 @@ namespace BusquedasRPI.Controllers
             Boolean searchSubstrings = vSearchParams.Substrings;
             String topRecordSearch = Configuration.GetSection("CustomSettings").GetSection("TopRecordSearch").Value.ToString();
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
+            Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
 
             if (vSearchParams != null 
                 && vSearchParams.Text != null 
@@ -61,7 +62,7 @@ namespace BusquedasRPI.Controllers
                         minSearchLength,
                         searchCollation);
 
-                    command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B " +
+                    command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B WITH (NOLOCK) " +
                         "WHERE 1=1 " +
                         "AND ( " + searchCondition.Condition + ") " +
                         classCondition), 
@@ -85,6 +86,9 @@ namespace BusquedasRPI.Controllers
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
+
+                    //Set timeout
+                    command.CommandTimeout = searchTimeout;
 
                     SqlDataReader result = command.ExecuteReader();
                     while (result.Read())

@@ -41,7 +41,7 @@ namespace BusquedasRPI.Controllers
             {
                 SqlCommand command = cnn.CreateCommand();
                 String tableName = "vwNiza";
-                command.CommandText = String.Format("SELECT * FROM {0} N " +
+                command.CommandText = String.Format("SELECT * FROM {0} N WITH (NOLOCK) " +
                     "WHERE 1=1 " + 
                     vSearchCondition + 
                     "ORDER BY N.Id ASC", tableName);
