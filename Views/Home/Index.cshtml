@@ -121,7 +121,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "0", new { @id = "fldSearchFonetica", @class = "searchCheckbox", @checked = "checked" })
+                                    @Html.RadioButton("fldSearchType", "0", new { @id = "fldSearchFonetica", @class = "searchCheckbox" })
                                 </td>
                             </tr>
                         </table>
@@ -135,7 +135,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "1", new { @id = "fldSearchExacto", @class = "searchCheckbox" })
+                                    @Html.RadioButton("fldSearchType", "1", new { @id = "fldSearchExacto", @class = "searchCheckbox", @checked = "checked" })
                                 </td>
                             </tr>
                         </table>
@@ -154,6 +154,34 @@
                             </tr>
                         </table>
                     </td>
+                    <td style="padding-left: 5px;">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Todas
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.CheckBox("fldSearchAll", true, new { @id = "fldSearchAll", @class = "searchCheckbox" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding-left: 5px;">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Parcial
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.CheckBox("fldSearchSubstrings", false, new { @id = "fldSearchSubstrings", @class = "searchCheckbox" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                     <td style="padding-left: 10px; width: 95%;">
                         &nbsp;
                         @Html.TextBox("fldSearchText", "", new { @class = "searchTextMain", @placeholder = @Html.DisplayName("Texto a buscar en marcas o titulares") })
@@ -167,7 +195,7 @@
 
     <div class="searchContainer">
         <div class="searchElementFull">
-            <button class="searchButtonMain" name="buttonSearch" onclick="doSearch();">
+            <button class="searchButtonMain" name="buttonSearch" id="buttonSearch" onclick="doSearch();">
                 BUSCAR
             </button>
         </div>
@@ -201,6 +229,7 @@
                     .Key("Id")
                     .LoadParams(new { searchParams = new JS("function() { return getSearchParameters() }") })
                 )
+                .OnContentReady("enableSearchButton")
                 .ShowBorders(true)
                 .Selection(s => {
                     s.Mode(SelectionMode.Multiple);
@@ -301,12 +330,44 @@
 
         vReturn.Classes = classesToList(selectedClasses);
         vReturn.Type = $(":radio[name=fldSearchType]:checked").val();
+        vReturn.AllWords = $("#fldSearchAll").is(":checked");
+        vReturn.Substrings = $("#fldSearchSubstrings").is(":checked");
         vReturn.Text = $('#fldSearchText').val();
 
         return JSON.stringify(vReturn);
     }
+
+    function validateSearch() {
+        var classes = $("#classesGrid").dxDataGrid("instance");
+        var selectedClasses = classes.getSelectedRowsData();
+        var selectedType = $(":radio[name=fldSearchType]:checked").val();
+
+        //foneticas y no clases
+        if (selectedType == '0' && selectedClasses.length == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
     function doSearch() {
-        $('#searchGrid').dxDataGrid('instance').refresh();
+        if (!validateSearch()) {
+            if (confirm('Las busquedas foneticas sobre todas las clases puede tardar algunos segundos. \nDesea continuar?')) {
+                disableSearchButton();
+                $('#searchGrid').dxDataGrid('instance').refresh();
+            }
+        } else {
+            disableSearchButton();
+            $('#searchGrid').dxDataGrid('instance').refresh();
+        }
+    }
+
+    function disableSearchButton() {
+        $('#buttonSearch').hide();
+    }
+
+    function enableSearchButton() {
+        $('#buttonSearch').show();
     }
 
     function doSearchDetalle() {
@@ -331,9 +392,9 @@
     function resetSelections() {
         $("#fldSearchText").val('');
         doClearSelectionGrid('classesGrid');
-        $('#fldSearchExacto').prop('checked', false);
         $('#fldSearchTitular').prop('checked', false);
-        $('#fldSearchFonetica').prop('checked', true);
+        $('#fldSearchFonetica').prop('checked', false);
+        $('#fldSearchExacto').prop('checked', true);
     }
 
     function getClassByExpedienteId() {

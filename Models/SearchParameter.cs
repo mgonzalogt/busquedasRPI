@@ -9,6 +9,8 @@ namespace BusquedasRPI.Models
     {
         public string Classes { get; set; }
         public string Type { get; set; }
+        public bool AllWords { get; set; }
+        public bool Substrings { get; set; }
         public string Text { get; set; }
     }
 }

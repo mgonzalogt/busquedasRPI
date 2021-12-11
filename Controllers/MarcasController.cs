@@ -21,7 +21,7 @@ namespace BusquedasRPI.Controllers
     [Route("api/[controller]")]
     public class MarcasController : Controller
     {
-        private IConfiguration Configuration;
+        private readonly IConfiguration Configuration;
 
         public MarcasController(IConfiguration _configuration)
         {
@@ -33,11 +33,17 @@ namespace BusquedasRPI.Controllers
         {
             List<Marca> marcas = new();
             SearchParameter vSearchParams = JsonConvert.DeserializeObject<SearchParameter>(searchParams);
+            String searchTable = Configuration.GetSection("CustomSettings").GetSection("SearchTable").Value.ToString();
+            Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
+            String searchWordCondition = vSearchParams.AllWords ? "AND" : "OR";
+            Boolean searchSubstrings = vSearchParams.Substrings;
+            String topRecordSearch = Configuration.GetSection("CustomSettings").GetSection("TopRecordSearch").Value.ToString();
+            String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
 
             if (vSearchParams != null 
                 && vSearchParams.Text != null 
                 && vSearchParams.Text.Trim() != "" 
-                && vSearchParams.Text.Trim().Length > 2)
+                && vSearchParams.Text.Trim().Length >= minSearchLength)
             {
                 string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
                 SqlConnection cnn;
@@ -46,36 +52,41 @@ namespace BusquedasRPI.Controllers
                 try
                 {
                     SqlCommand command = cnn.CreateCommand();
-                    String tableName = "vwBusquedas";
+                    String classCondition = SearchFunctions.BuildClassCondition(vSearchParams.Classes);
+                    SearchCondition searchCondition = SearchFunctions.BuildSearchCondition(
+                        vSearchParams.Text.Trim(), 
+                        vSearchParams.Type,
+                        searchWordCondition,
+                        searchSubstrings,
+                        minSearchLength,
+                        searchCollation);
 
-                    String classCondition = "";
-                    if (vSearchParams.Classes != null && vSearchParams.Classes.Trim() != "")
-                    {
-                        classCondition = "AND B.ClaseId IN ({1}) ";
-                    }
-
-                    String searchCondition = "";
-                    if (vSearchParams.Text != null && vSearchParams.Text.Trim() != "")
-                    {
-                        //Foneticas y Exactas
-                        if (vSearchParams.Type == "0" || vSearchParams.Type == "1")
-                        {
-                            searchCondition = "AND B.Denominacion LIKE @SearchText ";
-                        }
-
-                        //Titular
-                        if (vSearchParams.Type == "2")
-                        {
-                            searchCondition = "AND B.TitularNombre LIKE @SearchText ";
-                        }
-
-                    }
-
-                    command.CommandText = String.Format("SELECT TOP 500 * FROM {0} B " +
+                    command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B " +
                         "WHERE 1=1 " +
-                        searchCondition +
-                        classCondition, tableName, SearchFunctions.CleanString(vSearchParams.Classes));
-                    command.Parameters.Add("@SearchText", System.Data.SqlDbType.Text).Value = "%" + SearchFunctions.CleanString(vSearchParams.Text.Trim()) + "%";
+                        "AND ( " + searchCondition.Condition + ") " +
+                        classCondition), 
+                        topRecordSearch, 
+                        searchTable, 
+                        SearchFunctions.CleanString(vSearchParams.Classes));
+
+                    //Build params
+                    int cnt = 0;
+                    foreach (var word in searchCondition.Words)
+                    {
+                        command.Parameters
+                            .Add("@SearchText" + cnt.ToString(), SqlDbType.Text)
+                            .Value = SearchFunctions.GetSearchWordValue(word);
+                        cnt++;
+                    }
+
+                    //Get result query
+                    /*
+                    string query = command.CommandText;
+                    foreach (SqlParameter p in command.Parameters)
+                    {
+                        query = query.Replace(p.ParameterName, p.Value.ToString());
+                    }
+                    */
 
                     SqlDataReader result = command.ExecuteReader();
                     while (result.Read())
