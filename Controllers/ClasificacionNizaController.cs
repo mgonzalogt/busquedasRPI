@@ -30,7 +30,7 @@ namespace BusquedasRPI.Controllers
             String vSearchCondition = "";
             if (vSearchText.Trim() != "")
             {
-                vSearchCondition = "AND N.Detalle LIKE @SearchText ";
+                vSearchCondition = "AND N.DetalleText LIKE @SearchText ";
             }
 
             string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");

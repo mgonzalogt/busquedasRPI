@@ -81,11 +81,13 @@ namespace BusquedasRPI.Controllers
                     }
 
                     //Get result query
+                    /*
                     string query = command.CommandText;
                     foreach (SqlParameter p in command.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
+                    */
 
                     //Set timeout
                     command.CommandTimeout = searchTimeout;

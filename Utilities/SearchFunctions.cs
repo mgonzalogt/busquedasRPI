@@ -269,8 +269,8 @@ namespace BusquedasRPI.Utilities
                 }
             }
 
-            //Exactas y titulares
-            if (searchType == "1" || searchType == "2")
+            //Exactas, titulares y traduccion
+            if (searchType == "1" || searchType == "2" || searchType == "3")
             {
                 //Exactas
                 GetExactWords(words, searchField, searchWordCondition, minSearchLength, ref vReturn);
@@ -303,6 +303,12 @@ namespace BusquedasRPI.Utilities
                 if (searchType == "2")
                 {
                     vSearchField = "B.TitularNombre";
+                }
+
+                //Traduccion
+                if (searchType == "3")
+                {
+                    vSearchField = "B.TraduccionText";
                 }
 
                 //Build search
