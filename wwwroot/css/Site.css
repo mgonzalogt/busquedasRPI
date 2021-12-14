@@ -248,4 +248,8 @@ body, html {
     background-repeat: no-repeat; 
     background-size: cover;
     background-image: url('../img/NoOficial.png');
-} 
+}
+
+.gridDivDetail {
+    white-space:normal;
+}

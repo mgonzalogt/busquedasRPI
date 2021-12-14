@@ -279,6 +279,18 @@ namespace BusquedasRPI.Utilities
             return vReturn;
         }
 
+        public static Models.SearchCondition BuildNizaCondition(List<String> words, String searchField, String searchWordCondition, int minSearchLength, String collation)
+        {
+            Models.SearchCondition vReturn = new();
+            vReturn.Condition = " ";
+            vReturn.Words = new List<Models.SearchWord>();
+
+            //No ortografia
+            GetNoOrthographyWords(words, searchField, searchWordCondition, minSearchLength, ref vReturn, collation);
+
+            return vReturn;
+        }
+
         public static Models.SearchCondition BuildSearchCondition(String searchString, String searchType, String searchWordCondition, bool searchSubstrings, int minSearchLength, String collation)
         {
             Models.SearchCondition vReturn = new();

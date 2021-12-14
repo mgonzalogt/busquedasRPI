@@ -70,7 +70,7 @@
                 )
                 .MasterDetail(md => {
                     md.Enabled(true);
-                    md.Template(@<text><div><span style="color:#808080;">Detalle:</span> <%- data.Detalle %></div></text>);
+                    md.Template(@<text><div class="gridDivDetail"><span style="color:#808080;">Detalle:</span> <%- data.Detalle %></div></text>);
                 })
             )
 
@@ -217,11 +217,11 @@
                 .MasterDetail(md => {
                     md.Enabled(true);
                     md.Template(@<text>
-                        <div><span style="color:#808080;">Tipo:</span> <%- data.TipoDeMarca %></div>
-                        <div><span style="color:#808080;">Estado:</span> <%- data.Estado %></div>
-                        <div><span style="color:#808080;">Expediente Renovaci&oacute;n:</span> <%- data.ExpedienteRenovacion %></div>
-                        <div><span style="color:#808080;">Expediente Anotaci&oacute;n:</span> <%- data.ExpedienteAnotacion %></div>
-                        <div><span style="color:#808080;">Detalle de la clase:</span> <%- data.ClaseDetalle %></div>
+                        <div class="gridDivDetail"><span style="color:#808080;">Tipo:</span> <%- data.TipoDeMarca %></div>
+                        <div class="gridDivDetail"><span style="color:#808080;">Estado:</span> <%- data.Estado %></div>
+                        <div class="gridDivDetail"><span style="color:#808080;">Expediente Renovaci&oacute;n:</span> <%- data.ExpedienteRenovacion %></div>
+                        <div class="gridDivDetail"><span style="color:#808080;">Expediente Anotaci&oacute;n:</span> <%- data.ExpedienteAnotacion %></div>
+                        <div class="gridDivDetail"><span style="color:#808080;">Detalle de la clase:</span> <%- data.ClaseDetalle %></div>
                     </text>);
                 })
             )

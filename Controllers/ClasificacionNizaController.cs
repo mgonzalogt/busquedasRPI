@@ -10,6 +10,7 @@ using DevExtreme.AspNet.Mvc;
 
 using Microsoft.Extensions.Configuration;
 using BusquedasRPI.Utilities;
+using System.Data;
 
 namespace BusquedasRPI.Controllers
 {
@@ -27,11 +28,18 @@ namespace BusquedasRPI.Controllers
         {
             List<ClasificacionNiza> clases = new();
             String vSearchText = searchText == null ? "" : searchText.Trim();
-            String vSearchCondition = "";
-            if (vSearchText.Trim() != "")
-            {
-                vSearchCondition = "AND N.DetalleText LIKE @SearchText ";
-            }
+            Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
+            String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
+            Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
+            List<String> searchWords = new();
+            searchWords.Add(vSearchText);
+                
+            SearchCondition searchCondition = SearchFunctions.BuildNizaCondition(
+                        searchWords,
+                        "N.DetalleText",
+                        "OR",
+                        minSearchLength,
+                        searchCollation);
 
             string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
             SqlConnection cnn;
@@ -41,14 +49,36 @@ namespace BusquedasRPI.Controllers
             {
                 SqlCommand command = cnn.CreateCommand();
                 String tableName = "vwNiza";
+                String vCondition = searchCondition.Words.Count == 0 ? "" : "AND ( " + searchCondition.Condition + ") ";
+                
                 command.CommandText = String.Format("SELECT * FROM {0} N WITH (NOLOCK) " +
-                    "WHERE 1=1 " + 
-                    vSearchCondition + 
+                    "WHERE 1=1 " +
+                    vCondition +
                     "ORDER BY N.Id ASC", tableName);
-                command.Parameters.Add("@SearchText", System.Data.SqlDbType.Text).Value = "%" + SearchFunctions.CleanString(vSearchText) + "%";
+
+                //Build params
+                int cnt = 0;
+                foreach (var word in searchCondition.Words)
+                {
+                    command.Parameters
+                        .Add("@SearchText" + cnt.ToString(), SqlDbType.Text)
+                        .Value = SearchFunctions.GetSearchWordValue(word);
+                    cnt++;
+                }
+
+                //Get result query
+                /*
+                string query = command.CommandText;
+                foreach (SqlParameter p in command.Parameters)
+                {
+                    query = query.Replace(p.ParameterName, p.Value.ToString());
+                }
+                */
+
+                //Set timeout
+                command.CommandTimeout = searchTimeout;
 
                 SqlDataReader result = command.ExecuteReader();
-
 
                 while (result.Read())
                 {
