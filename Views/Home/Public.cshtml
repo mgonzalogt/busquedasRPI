@@ -58,9 +58,12 @@
                 .FilterRow(f => f.Visible(true))
                 .ColumnAutoWidth(true)
                 .ColumnHidingEnabled(true)
-                .Columns(columns => {
+                .Columns(columns =>
+                {
                     columns.AddFor(m => m.Descripcion).Caption("Clase");
+                    columns.AddFor(m => m.Detalle).Caption("Detalle");
                 })
+                .WordWrapEnabled(true)
                 .Paging(p => p.PageSize(5))
                 .Pager(p => p
                     .ShowPageSizeSelector(true)
@@ -68,10 +71,6 @@
                     .ShowInfo(true)
                     .InfoText("Pagina {0} de {1} ({2} registros) ")
                 )
-                .MasterDetail(md => {
-                    md.Enabled(true);
-                    md.Template(@<text><div class="gridDivDetail"><span style="color:#808080;">Detalle:</span> <%- data.Detalle %></div></text>);
-                })
             )
 
         </div>
@@ -81,6 +80,20 @@
         <div class="searchElementFull">
             <table style="width:100%">
                 <tr>
+                    <td>
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Alfa
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.CheckBox("fldSearchAlphaOnly", true, new { @id = "fldSearchAlphaOnly", @class = "searchCheckbox" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                     <td>
                         <table style="width:100%">
                             <tr>
@@ -179,10 +192,6 @@
                 )
                 .OnContentReady("enableSearchButton")
                 .ShowBorders(true)
-                .Selection(s => {
-                    s.Mode(SelectionMode.Multiple);
-                    s.ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always);
-                } )
                 .NoDataText("[ Ingrese algunos criterios validos busqueda ]")
                 .Grouping(grouping => {
                     grouping.AutoExpandAll(true);
@@ -203,10 +212,12 @@
                 .Columns(columns => {
                     columns.AddFor(m => m.Clase).Caption("Clase").Width(175);
                     columns.AddFor(m => m.Registro).Caption("Registro").Width(100);
-                    columns.AddFor(m => m.ExpedienteId).Caption("Expediente").Width(100);
+                    columns.AddFor(m => m.ExpedienteId).Caption("Expediente").Width(110);
                     columns.AddFor(m => m.Denominacion).Caption("Denominacion");
                     columns.AddFor(m => m.Traduccion).Caption("Traduccion");
+                    columns.AddFor(m => m.Estado).Caption("Estado");
                 })
+                .WordWrapEnabled(true)
                 .Paging(p => p.PageSize(25))
                 .Pager(p => p
                     .ShowPageSizeSelector(true)
@@ -218,7 +229,6 @@
                     md.Enabled(true);
                     md.Template(@<text>
                         <div class="gridDivDetail"><span style="color:#808080;">Tipo:</span> <%- data.TipoDeMarca %></div>
-                        <div class="gridDivDetail"><span style="color:#808080;">Estado:</span> <%- data.Estado %></div>
                         <div class="gridDivDetail"><span style="color:#808080;">Expediente Renovaci&oacute;n:</span> <%- data.ExpedienteRenovacion %></div>
                         <div class="gridDivDetail"><span style="color:#808080;">Expediente Anotaci&oacute;n:</span> <%- data.ExpedienteAnotacion %></div>
                         <div class="gridDivDetail"><span style="color:#808080;">Detalle de la clase:</span> <%- data.ClaseDetalle %></div>
@@ -274,6 +284,7 @@
         vReturn.Type = $(":radio[name=fldSearchType]:checked").val();
         vReturn.AllWords = $("#fldSearchAll").is(":checked");
         vReturn.Substrings = false;
+        vReturn.AlphaOnly = $("#fldSearchAlphaOnly").is(":checked");
         vReturn.Text = $('#fldSearchText').val();
 
         return JSON.stringify(vReturn);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BusquedasRPI.Utilities
@@ -47,6 +48,11 @@ namespace BusquedasRPI.Utilities
             }
 
             return vReturn;
+        }
+
+        public static string RemoveSpecialCharacters(string str)
+        {
+            return Regex.Replace(str, "[^a-zA-Z0-9 ]+", "", RegexOptions.Compiled);
         }
 
         private static void GetExactWords(List<String> words, String searchField, String searchWordCondition, int minSearchLength, ref Models.SearchCondition searchCondition)
@@ -291,7 +297,7 @@ namespace BusquedasRPI.Utilities
             return vReturn;
         }
 
-        public static Models.SearchCondition BuildSearchCondition(String searchString, String searchType, String searchWordCondition, bool searchSubstrings, int minSearchLength, String collation)
+        public static Models.SearchCondition BuildSearchCondition(String searchString, String searchType, String searchWordCondition, bool searchSubstrings, bool searchAlphaOnly, int minSearchLength, String collation)
         {
             Models.SearchCondition vReturn = new();
             vReturn.Condition = " ";
@@ -301,7 +307,15 @@ namespace BusquedasRPI.Utilities
                 && searchString.Trim() != "" 
                 && searchString.Trim().Length >= minSearchLength)
             {
-                List<String> words = GetSearchWords(searchString);
+                String vSearchString = searchString;
+
+                //Remove special chars
+                if (searchAlphaOnly)
+                {
+                    vSearchString = RemoveSpecialCharacters(vSearchString);
+                }
+
+                List<String> words = GetSearchWords(vSearchString);
                 String vSearchField = "";
 
                 //Foneticas y Exactas

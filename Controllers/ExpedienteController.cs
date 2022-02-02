@@ -27,19 +27,23 @@ namespace BusquedasRPI.Controllers
         {
             Marca marca = new();
 
-            string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
+            String connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
+            String tableName = Configuration.GetSection("CustomSettings").GetSection("SearchTable").Value.ToString();
+            Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
+
             SqlConnection cnn;
             cnn = new SqlConnection(connetionString);
             cnn.Open();
             try
             {
                 SqlCommand command = cnn.CreateCommand();
-                String tableName = "vwBusquedas";
                 command.CommandText = String.Format("SELECT * FROM {0} WITH (NOLOCK) WHERE ExpedienteId = @ExpedienteId", tableName);
-                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.Int).Value = SearchFunctions.CleanString(expedienteId);
+                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.NVarChar).Value = SearchFunctions.CleanString(expedienteId);
+
+                //Set timeout
+                command.CommandTimeout = searchTimeout;
 
                 SqlDataReader result = command.ExecuteReader();
-
 
                 while (result.Read())
                 {

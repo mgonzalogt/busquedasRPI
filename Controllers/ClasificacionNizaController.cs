@@ -28,6 +28,7 @@ namespace BusquedasRPI.Controllers
         {
             List<ClasificacionNiza> clases = new();
             String vSearchText = searchText == null ? "" : searchText.Trim();
+            String tableName = Configuration.GetSection("CustomSettings").GetSection("NizaTable").Value.ToString();
             Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
             Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
@@ -48,9 +49,7 @@ namespace BusquedasRPI.Controllers
             try
             {
                 SqlCommand command = cnn.CreateCommand();
-                String tableName = "vwNiza";
                 String vCondition = searchCondition.Words.Count == 0 ? "" : "AND ( " + searchCondition.Condition + ") ";
-                
                 command.CommandText = String.Format("SELECT * FROM {0} N WITH (NOLOCK) " +
                     "WHERE 1=1 " +
                     vCondition +

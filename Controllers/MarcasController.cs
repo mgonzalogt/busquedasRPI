@@ -37,6 +37,7 @@ namespace BusquedasRPI.Controllers
             Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
             String searchWordCondition = vSearchParams.AllWords ? "AND" : "OR";
             Boolean searchSubstrings = vSearchParams.Substrings;
+            Boolean searchAlphaOnly = vSearchParams.AlphaOnly;
             String topRecordSearch = Configuration.GetSection("CustomSettings").GetSection("TopRecordSearch").Value.ToString();
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
             Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
@@ -59,13 +60,14 @@ namespace BusquedasRPI.Controllers
                         vSearchParams.Type,
                         searchWordCondition,
                         searchSubstrings,
+                        searchAlphaOnly,
                         minSearchLength,
                         searchCollation);
 
                     command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B WITH (NOLOCK) " +
                         "WHERE 1=1 " +
-                        "AND ( " + searchCondition.Condition + ") " +
-                        classCondition), 
+                        classCondition + 
+                        "AND ( " + searchCondition.Condition + ") "), 
                         topRecordSearch, 
                         searchTable, 
                         SearchFunctions.CleanString(vSearchParams.Classes));

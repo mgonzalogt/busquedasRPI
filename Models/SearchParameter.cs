@@ -11,6 +11,7 @@ namespace BusquedasRPI.Models
         public string Type { get; set; }
         public bool AllWords { get; set; }
         public bool Substrings { get; set; }
+        public bool AlphaOnly { get; set; }
         public string Text { get; set; }
     }
 }
