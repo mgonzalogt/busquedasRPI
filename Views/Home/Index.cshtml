@@ -312,12 +312,13 @@
 
 <script>
 
+    var vLoggedUser = '@ViewContext.HttpContext.Request.Query["user"]';
+
     $(document).ready(function () {
 
         $('#fldSearchTextDetalle').keypress(function (e) {
             var key = (e.keyCode ? e.keyCode : e.which);
-            if (key == '13')
-            {
+            if (key == '13') {
                 doSearchDetalle();
                 return false;
             }
@@ -455,7 +456,7 @@
     function doSelectClassesGrid(id) {
         var dataGrid = $("#classesGrid").dxDataGrid("instance");
         //Default Servicios and Senal de Publicidad
-        dataGrid.selectRows([1,47,id]);
+        dataGrid.selectRows([1, 47, id]);
     }
 
     function resetSelections() {
@@ -514,11 +515,16 @@
     function exportToPDF() {
         var doc = new jsPDF();
         var dataGrid = $("#searchGrid").dxDataGrid("instance");
+        var vHoy = new Date();
 
         DevExpress.pdfExporter.exportDataGrid({
             jsPDFDocument: doc,
             component: dataGrid
         }).then(function () {
+            doc.setPage(1);
+            doc.setTextColor('#808080');
+            doc.setFontSize(12);
+            doc.text(20, 10, 'Usuario: ' + vLoggedUser + '    Fecha: ' + vHoy.toString(), null, 0);
             doc.save("Marcas.pdf");
         });
     }

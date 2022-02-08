@@ -31,24 +31,26 @@
 
 <body class="dx-viewport">
     <div id="app-side-nav-outer-toolbar">
-        <div class="layout-header">
-            @(Html.DevExtreme().Toolbar()
-                .Items(items => {
-                    items.Add()
-                        .Widget(w => w
-                            .Button()
-                            .Icon("menu")
-                            .OnClick("BusquedasRPI.onMenuButtonClick")
-                        )
-                        .Location(ToolbarItemLocation.Before)
-                        .CssClass("menu-button");
-                    items.Add()
-                        .Html("<div>B&uacute;squedas RPI</div>")
-                        .Location(ToolbarItemLocation.Before)
-                        .CssClass("header-title");
-                })
-            )
-        </div>
+        <!--
+    <div class="layout-header">
+        @(Html.DevExtreme().Toolbar()
+            .Items(items => {
+                items.Add()
+                    .Widget(w => w
+                        .Button()
+                        .Icon("menu")
+                        .OnClick("BusquedasRPI.onMenuButtonClick")
+                    )
+                    .Location(ToolbarItemLocation.Before)
+                    .CssClass("menu-button");
+                items.Add()
+                    .Html("<div>B&uacute;squedas RPI</div>")
+                    .Location(ToolbarItemLocation.Before)
+                    .CssClass("header-title");
+            })
+        )
+    </div>
+        -->
         <div class="layout-body layout-body-hidden">
             @(Html.DevExtreme().Drawer()
                 .ID("layout-drawer")
@@ -62,7 +64,8 @@
                         <div class="content-block">
                             <div class="content-footer">
                                 <div id="footer">
-                                    Registro de la Propiedad Intelectual, 2021
+                                    Registro de la Propiedad Intelectual, 2022
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -71,45 +74,49 @@
             )
         </div>
 
-        @using (Html.DevExtreme().NamedTemplate("navigation-menu"))
-        {
-            <div class="menu-container dx-swatch-additional">
+        <!--
 
-                @functions{
-                    string GetUrl(string action) => Url.Action(action);
-                    string GetCurrentUrl() => Url.Action(ViewContext.RouteData.Values["action"].ToString());
-                    bool IsCurrentUrl(string pageName) => GetUrl(pageName) == GetCurrentUrl();
-                }
+    @using (Html.DevExtreme().NamedTemplate("navigation-menu"))
+    {
+        <div class="menu-container dx-swatch-additional">
 
-                @(Html.DevExtreme().TreeView()
-                .Items(items => {
-                    items.Add()
-                        .Text("Internas")
-                        .Icon("home")
-                        .Option("path", GetUrl("Index"))
-                        .Selected(IsCurrentUrl("Index"));
+            @functions{
+                string GetUrl(string action) => Url.Action(action);
+                string GetCurrentUrl() => Url.Action(ViewContext.RouteData.Values["action"].ToString());
+                bool IsCurrentUrl(string pageName) => GetUrl(pageName) == GetCurrentUrl();
+            }
 
-                    items.Add()
-                        .Text("Publicas")
-                        .Icon("globe")
-                        .Option("path", GetUrl("Public"))
-                        .Selected(IsCurrentUrl("Public"));
+            @(Html.DevExtreme().TreeView()
+            .Items(items => {
+                items.Add()
+                    .Text("Internas")
+                    .Icon("home")
+                    .Option("path", GetUrl("Index"))
+                    .Selected(IsCurrentUrl("Index"));
 
-                    items.Add()
-                        .Text("Acerca de")
-                        .Icon("info")
-                        .Option("path", GetUrl("About"))
-                        .Selected(IsCurrentUrl("About"));
-                })
-                .ExpandEvent(TreeViewExpandEvent.Click)
-                .SelectionMode(NavSelectionMode.Single)
-                .SelectedExpr("selected")
-                .FocusStateEnabled(false)
-                .Width(250)
-                .OnItemClick("BusquedasRPI.onTreeViewItemClick")
-            )
-            </div>
-        }
+                items.Add()
+                    .Text("Publicas")
+                    .Icon("globe")
+                    .Option("path", GetUrl("Public"))
+                    .Selected(IsCurrentUrl("Public"));
+
+                items.Add()
+                    .Text("Acerca de")
+                    .Icon("info")
+                    .Option("path", GetUrl("About"))
+                    .Selected(IsCurrentUrl("About"));
+            })
+            .ExpandEvent(TreeViewExpandEvent.Click)
+            .SelectionMode(NavSelectionMode.Single)
+            .SelectedExpr("selected")
+            .FocusStateEnabled(false)
+            .Width(250)
+            .OnItemClick("BusquedasRPI.onTreeViewItemClick")
+        )
+        </div>
+    }
+
+    -->
 
         <script>
 
@@ -216,6 +223,11 @@
                 BusquedasRPI.init();
             });
         </script>
+
+        <style>
+            .dx-drawer-content { padding:0px !important; }
+            .dx-drawer-panel-content { width:0px !important; }
+        </style>
 </body>
 
 </html>
