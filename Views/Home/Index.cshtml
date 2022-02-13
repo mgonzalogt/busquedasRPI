@@ -285,6 +285,7 @@
 <script>
 
     var vLoggedUser = '@ViewContext.HttpContext.Request.Query["user"]';
+    if (vLoggedUser == '') vLoggedUser = 'Publico';
 
     $(document).ready(function () {
 
@@ -472,6 +473,20 @@
         e.cancel = true;
     }
 
+    function dateToString(dt) {
+        var mm = dt.getMonth() + 1; // getMonth() is zero-based
+        var dd = dt.getDate();
+
+        return [
+            (dd > 9 ? '' : '0') + dd + '/',
+            (mm > 9 ? '' : '0') + mm + '/', 
+            dt.getFullYear() + ' - ',
+            dt.getHours() + ":",
+            dt.getMinutes() + ":",
+            dt.getSeconds()
+        ].join('');
+    };
+
     function exportToPDF() {
         var doc = new jsPDF();
         var dataGrid = $("#searchGrid").dxDataGrid("instance");
@@ -484,7 +499,7 @@
             doc.setPage(1);
             doc.setTextColor('#808080');
             doc.setFontSize(12);
-            doc.text(20, 10, 'Usuario: ' + vLoggedUser + '    Fecha: ' + vHoy.toString(), null, 0);
+            doc.text(20, 10, 'Usuario: ' + vLoggedUser + '    Fecha: ' + dateToString(vHoy), null, 0);
             doc.save("Marcas.pdf");
         });
     }
