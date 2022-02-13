@@ -38,7 +38,7 @@ namespace BusquedasRPI.Controllers
             {
                 SqlCommand command = cnn.CreateCommand();
                 command.CommandText = String.Format("SELECT * FROM {0} WITH (NOLOCK) WHERE ExpedienteId = @ExpedienteId", tableName);
-                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.NVarChar).Value = SearchFunctions.CleanString(expedienteId);
+                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.NVarChar).Value = SearchFunctions.CleanString(expedienteId).Replace("-", "");
 
                 //Set timeout
                 command.CommandTimeout = searchTimeout;

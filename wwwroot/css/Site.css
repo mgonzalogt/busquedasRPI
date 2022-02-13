@@ -219,6 +219,13 @@ body, html {
     font-size: 15px;
     border: 1px solid #cccccc;
 }
+
+.searchSelectCriteria {
+    height:35px;
+    font-size: 15px;
+    border: 1px solid #cccccc;
+}
+
 .searchCheckbox {
     width: 25px;
     height: 25px;

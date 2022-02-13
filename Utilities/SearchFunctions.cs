@@ -35,16 +35,51 @@ namespace BusquedasRPI.Utilities
             return searchString.Trim().Split(" ").ToList();
         }
 
-        public static String GetSearchWordValue(Models.SearchWord word)
+        public static String GetSearchWordValue(Models.SearchWord word, int wildCriteria)
         {
             String vReturn;
+            String startWild = "%";
+            String endWild = "%";
+
+            switch(wildCriteria)
+            {
+                //Contains
+                case 0:
+                    startWild = "%";
+                    endWild = "%";
+                    break;
+
+                //Starts
+                case 1:
+                    startWild = "";
+                    endWild = "%";
+                    break;
+
+                //Ends
+                case 2:
+                    startWild = "%";
+                    endWild = "";
+                    break;
+
+                //Equal
+                case 3:
+                    startWild = "";
+                    endWild = "";
+                    break;
+
+                //Default
+                default:
+                    startWild = "%";
+                    endWild = "%";
+                    break;
+            }
 
             if (word.SearchReplace)
             {
-                vReturn = "%" + AddOrthographyReplacementsRight(CleanString(word.SearchText)) + "%";
+                vReturn = startWild + AddOrthographyReplacementsRight(CleanString(word.SearchText)) + endWild;
             } else
             {
-                vReturn = "%" + CleanString(word.SearchText) + "%";
+                vReturn = startWild + CleanString(word.SearchText) + endWild;
             }
 
             return vReturn;
@@ -124,11 +159,11 @@ namespace BusquedasRPI.Utilities
             return vReturn;
         }
 
-        private static void GetSubWords(List<String> words, String searchField, int minSearchLength, ref Models.SearchCondition searchCondition)
+        private static void GetSubWords(List<String> words, String searchField, int minSubwordLength, ref Models.SearchCondition searchCondition)
         {
             foreach (var word in words)
             {
-                List<String> subwords = ExtractSubWords(CleanString(word), minSearchLength);
+                List<String> subwords = ExtractSubWords(CleanString(word), minSubwordLength);
 
                 foreach (var subword in subwords)
                 {
@@ -255,7 +290,7 @@ namespace BusquedasRPI.Utilities
             }
         }
 
-        private static Models.SearchCondition DoBuildSearchCondition(List<String> words, String searchField, String searchWordCondition, bool searchSubstrings, int minSearchLength, String searchType, String collation)
+        private static Models.SearchCondition DoBuildSearchCondition(List<String> words, String searchField, String searchWordCondition, bool searchSubstrings, int minSearchLength, int minSubwordLength, String searchType, String collation)
         {
             Models.SearchCondition vReturn = new();
             vReturn.Condition = " ";
@@ -271,7 +306,7 @@ namespace BusquedasRPI.Utilities
                 //Subcadenas mayores o igual al minSearchLength
                 if (searchSubstrings)
                 {
-                    GetSubWords(words, searchField, minSearchLength, ref vReturn);
+                    GetSubWords(words, searchField, minSubwordLength, ref vReturn);
                 }
             }
 
@@ -297,7 +332,7 @@ namespace BusquedasRPI.Utilities
             return vReturn;
         }
 
-        public static Models.SearchCondition BuildSearchCondition(String searchString, String searchType, String searchWordCondition, bool searchSubstrings, bool searchAlphaOnly, int minSearchLength, String collation)
+        public static Models.SearchCondition BuildSearchCondition(String searchString, String searchType, String searchWordCondition, bool searchSubstrings, bool searchAlphaOnly, int minSearchLength, int minSubwordLength, String collation)
         {
             Models.SearchCondition vReturn = new();
             vReturn.Condition = " ";
@@ -338,7 +373,7 @@ namespace BusquedasRPI.Utilities
                 }
 
                 //Build search
-                vReturn = DoBuildSearchCondition(words, vSearchField, searchWordCondition, searchSubstrings, minSearchLength, searchType, collation);
+                vReturn = DoBuildSearchCondition(words, vSearchField, searchWordCondition, searchSubstrings, minSearchLength, minSubwordLength, searchType, collation);
             } 
 
             return vReturn;

@@ -35,9 +35,11 @@ namespace BusquedasRPI.Controllers
             SearchParameter vSearchParams = JsonConvert.DeserializeObject<SearchParameter>(searchParams);
             String searchTable = Configuration.GetSection("CustomSettings").GetSection("SearchTable").Value.ToString();
             Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
+            Int32 minSubwordLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSubwordLength").Value);
             String searchWordCondition = vSearchParams.AllWords ? "AND" : "OR";
             Boolean searchSubstrings = vSearchParams.Substrings;
             Boolean searchAlphaOnly = vSearchParams.AlphaOnly;
+            Int32 wildCriteria = vSearchParams.WildCriteria;
             String topRecordSearch = Configuration.GetSection("CustomSettings").GetSection("TopRecordSearch").Value.ToString();
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
             Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
@@ -62,6 +64,7 @@ namespace BusquedasRPI.Controllers
                         searchSubstrings,
                         searchAlphaOnly,
                         minSearchLength,
+                        minSubwordLength,
                         searchCollation);
 
                     command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B WITH (NOLOCK) " +
@@ -78,7 +81,7 @@ namespace BusquedasRPI.Controllers
                     {
                         command.Parameters
                             .Add("@SearchText" + cnt.ToString(), SqlDbType.Text)
-                            .Value = SearchFunctions.GetSearchWordValue(word);
+                            .Value = SearchFunctions.GetSearchWordValue(word, wildCriteria);
                         cnt++;
                     }
 

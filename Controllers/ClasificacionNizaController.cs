@@ -61,7 +61,7 @@ namespace BusquedasRPI.Controllers
                 {
                     command.Parameters
                         .Add("@SearchText" + cnt.ToString(), SqlDbType.Text)
-                        .Value = SearchFunctions.GetSearchWordValue(word);
+                        .Value = SearchFunctions.GetSearchWordValue(word, 0); //contains
                     cnt++;
                 }
 

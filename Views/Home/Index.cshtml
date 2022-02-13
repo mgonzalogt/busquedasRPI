@@ -114,68 +114,26 @@
                         <table style="width:100%">
                             <tr>
                                 <td style="text-align:center">
+                                    Tipo
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.DropDownListFor(model => TypeParameter.fldSearchType, TypeParameter.SearchTypeList, null, new { @class = "searchSelectCriteria" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding-left: 5px;">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
                                     Alfa
                                 </td>
                             </tr>
                             <tr>
                                 <td style="text-align:center">
                                     @Html.CheckBox("fldSearchAlphaOnly", true, new { @id = "fldSearchAlphaOnly", @class = "searchCheckbox" })
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td>
-                        <table style="width:100%">
-                            <tr>
-                                <td style="text-align:center">
-                                    Fon&eacute;tica
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "0", new { @id = "fldSearchFonetica", @class = "searchCheckbox" })
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td style="padding-left: 5px;">
-                        <table style="width:100%">
-                            <tr>
-                                <td style="text-align:center">
-                                    Exacto
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "1", new { @id = "fldSearchExacto", @class = "searchCheckbox", @checked = "checked" })
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td style="padding-left: 5px;">
-                        <table style="width:100%">
-                            <tr>
-                                <td style="text-align:center">
-                                    Titular
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "2", new { @id = "fldSearchTitular", @class = "searchCheckbox" })
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td style="padding-left: 5px;">
-                        <table style="width:100%">
-                            <tr>
-                                <td style="text-align:center;">
-                                    Traducci&oacute;n
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center">
-                                    @Html.RadioButton("fldSearchType", "3", new { @id = "fldSearchTraduccion", @class = "searchCheckbox" })
                                 </td>
                             </tr>
                         </table>
@@ -204,6 +162,20 @@
                             <tr>
                                 <td style="text-align:center">
                                     @Html.CheckBox("fldSearchSubstrings", false, new { @id = "fldSearchSubstrings", @class = "searchCheckbox" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding-left: 5px;">
+                        <table style="width:100%">
+                            <tr>
+                                <td style="text-align:center">
+                                    Criterio
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    @Html.DropDownListFor(model => WildParameter.CriteriaType, WildParameter.CriteriaTypeList, null, new { @class = "searchSelectCriteria" })
                                 </td>
                             </tr>
                         </table>
@@ -340,29 +312,16 @@
             }
         });
 
-        $('#fldSearchFonetica').click(function (e) {
-            if ($('#fldSearchFonetica').is(":checked")) {
+        $('#fldSearchType').change(function (e) {
+            $('#fldSearchSubstrings').prop('checked', false);
+            if ($('#fldSearchType').val() == "0") {
                 $('#parcialContainer').show();
-                $('#fldSearchSubstrings').prop('checked', false);
-            }
-        });
-
-        $('#fldSearchExacto').click(function (e) {
-            if ($('#fldSearchExacto').is(":checked")) {
+            } else {
                 $('#parcialContainer').hide();
-                $('#fldSearchSubstrings').prop('checked', false);
             }
         });
 
-        $('#fldSearchTitular').click(function (e) {
-            if ($('#fldSearchTitular').is(":checked")) {
-                $('#parcialContainer').hide();
-                $('#fldSearchSubstrings').prop('checked', false);
-            }
-        });
-
-        $('#fldSearchText').focus();
-
+        resetSelections();
     });
 
     function classesToList(selectedClasses) {
@@ -382,10 +341,11 @@
         var selectedClasses = classes.getSelectedRowsData();
 
         vReturn.Classes = classesToList(selectedClasses);
-        vReturn.Type = $(":radio[name=fldSearchType]:checked").val();
+        vReturn.Type = $("#fldSearchType").val();
         vReturn.AllWords = $("#fldSearchAll").is(":checked");
         vReturn.Substrings = $("#fldSearchSubstrings").is(":checked");
         vReturn.AlphaOnly = $("#fldSearchAlphaOnly").is(":checked");
+        vReturn.WildCriteria = $('#CriteriaType').val();
         vReturn.Text = $('#fldSearchText').val();
 
         return JSON.stringify(vReturn);
@@ -394,7 +354,7 @@
     function validateSearch() {
         var classes = $("#classesGrid").dxDataGrid("instance");
         var selectedClasses = classes.getSelectedRowsData();
-        var selectedType = $(":radio[name=fldSearchType]:checked").val();
+        var selectedType = $("#fldSearchType").val();
         var selectedSubstrings = $("#fldSearchSubstrings").is(":checked");
         var warningMessage = "";
         var vReturn = {};
@@ -462,13 +422,12 @@
     function resetSelections() {
         $("#fldSearchText").val('');
         doClearSelectionGrid('classesGrid');
-        $('#fldSearchTraduccion').prop('checked', false);
-        $('#fldSearchTitular').prop('checked', false);
-        $('#fldSearchFonetica').prop('checked', false);
-        $('#fldSearchExacto').prop('checked', true);
+        $("#fldSearchType").val("1");
         $('#fldSearchAll').prop('checked', true);
         $('#fldSearchSubstrings').prop('checked', false);
+        $('#CriteriaType').val("0");
         $('#parcialContainer').hide();
+        $('#fldSearchText').focus();
     }
 
     function getClassByExpedienteId() {
@@ -486,6 +445,7 @@
                     var vClase = String(data.Clase).trim();
 
                     $("#fldSearchText").val(vDenominacion);
+                    $('#CriteriaType').val("3");
                     doSelectClassesGrid(vClase);
                 }
             },
