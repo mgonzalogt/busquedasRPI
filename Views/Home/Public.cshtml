@@ -327,15 +327,34 @@
         return doc;
     }
 
+    function dateToString(dt) {
+        var mm = dt.getMonth() + 1; // getMonth() is zero-based
+        var dd = dt.getDate();
+
+        return [
+            (dd > 9 ? '' : '0') + dd + '/',
+            (mm > 9 ? '' : '0') + mm + '/',
+            dt.getFullYear() + ' - ',
+            dt.getHours() + ":",
+            dt.getMinutes() + ":",
+            dt.getSeconds()
+        ].join('');
+    };
+
     function exportToPDF() {
         var doc = new jsPDF();
         var dataGrid = $("#searchGrid").dxDataGrid("instance");
+        var vHoy = new Date();
 
         DevExpress.pdfExporter.exportDataGrid({
             jsPDFDocument: doc,
             component: dataGrid
         }).then(function () {
             doc = addWaterMark(doc);
+            doc.setPage(1);
+            doc.setTextColor('#808080');
+            doc.setFontSize(12);
+            doc.text(20, 10, 'Usuario: Publico    Fecha: ' + dateToString(vHoy), null, 0);
             doc.save("Marcas.pdf");
         });
     }
