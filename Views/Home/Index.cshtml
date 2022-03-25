@@ -437,23 +437,28 @@
         //Reset selections
         resetSelections();
 
-        $.ajax({
-            type: "Get",
-            url: "/Expediente/GetMarcaByExpedienteId?expedienteId=" + vExpedienteId,
-            success: function (data) {
-                if (data && data.Id) {
-                    var vDenominacion = String(data.Denominacion).trim();
-                    var vClase = String(data.Clase).trim();
+        if (vExpedienteId != "") {
+            $.ajax({
+                type: "Get",
+                url: "/Expediente/GetMarcaByExpedienteId?expedienteId=" + vExpedienteId,
+                success: function (data) {
+                    if (data && data.Id) {
+                        var vDenominacion = String(data.Denominacion).trim();
+                        var vClase = String(data.Clase).trim();
 
-                    $("#fldSearchText").val(vDenominacion);
-                    $('#CriteriaType').val("0");
-                    doSelectClassesGrid(vClase);
+                        $("#fldSearchText").val(vDenominacion);
+                        $('#CriteriaType').val("0");
+                        doSelectClassesGrid(vClase);
+                    } else {
+                        alert('Expediente no encontrado');
+                    }
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                    alert('Error en la consulta');
                 }
-            },
-            error: function (response) {
-                console.log(response.responseText);
-            }
-        });
+            });
+        }
     }
 
     function exportToExcel() {
