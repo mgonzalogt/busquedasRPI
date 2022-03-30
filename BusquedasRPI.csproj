@@ -5,6 +5,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Reporte\_reporte_.vsrepx" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Reporte\_reporte_.vsrepx" />
+    </ItemGroup>
+
+    <ItemGroup>
+    <PackageReference Include="DevExpress.Reporting.Core" Version="20.2.6" />
     <PackageReference Include="DevExpress.Xpo" Version="20.2.6" />
     <PackageReference Include="DevExtreme.AspNet.Data" Version="2.7.1" />
     <PackageReference Include="DevExtreme.AspNet.Core" Version="20.2.6" />
@@ -15,6 +24,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Reporte\_reporte_.cs">
+        <DependentUpon>_reporte_.vsrepx</DependentUpon>
+      </Compile>
+      <Compile Update="Reporte\_reporte_.Designer.cs">
+        <DependentUpon>_reporte_.vsrepx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ProjectExtensions><VisualStudio><UserProperties TemplateFeatures="NETCORE" /></VisualStudio></ProjectExtensions>
