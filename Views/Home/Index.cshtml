@@ -1,5 +1,6 @@
 @using BusquedasRPI.Models
 
+
 <h2 class="content-block">B&uacute;squedas</h2>
 
 <div class="content-block">
@@ -230,8 +231,9 @@
                 .OnContentReady("enableSearchButton")
                 .ShowBorders(true)
                 .Selection(s => {
-                    s.Mode(SelectionMode.Multiple);
-                    s.ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always);
+                    s.Mode(SelectionMode.None);
+                    s.SelectAllMode(SelectAllMode.AllPages);
+                    s.ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.None);
                 } )
                 .NoDataText("[ Ingrese algunos criterios validos busqueda ]")
                 .Grouping(grouping => {
@@ -280,10 +282,32 @@
 
         </div>
     </div>
-</div>
+
+        @using (Html.DevExtreme().NamedTemplate("popup-template"))
+        {
+            <div id="divReporte"></div>
+        }
+
+        @(Html.DevExtreme().Popup()
+            .ID("report-popup")
+            .Width(900)
+            .Height(700)
+            .Container(".dx-viewport")
+            .ShowTitle(true)
+            .Title("Resultados de Busqueda")
+            .DragEnabled(false)
+            .CloseOnOutsideClick(true)
+            .ShowCloseButton(true)
+            .ContentTemplate(new TemplateName("popup-template"))
+
+        )
+
+
+    </div>
 
 <script>
 
+    //User
     var vLoggedUser = '@ViewContext.HttpContext.Request.Query["user"]';
     if (vLoggedUser == '') vLoggedUser = 'Publico';
 
@@ -484,7 +508,7 @@
 
         return [
             (dd > 9 ? '' : '0') + dd + '/',
-            (mm > 9 ? '' : '0') + mm + '/', 
+            (mm > 9 ? '' : '0') + mm + '/',
             dt.getFullYear() + ' - ',
             dt.getHours() + ":",
             dt.getMinutes() + ":",
@@ -493,19 +517,16 @@
     };
 
     function exportToPDF() {
-        var doc = new jsPDF();
-        var dataGrid = $("#searchGrid").dxDataGrid("instance");
-        var vHoy = new Date();
+        const reportPopup = $("#report-popup").dxPopup("instance");
+        const vUrl = '@Url.Action("Reporte","Home")?usuario=' + vLoggedUser + '&searchParams=' + getSearchParameters();
 
-        DevExpress.pdfExporter.exportDataGrid({
-            jsPDFDocument: doc,
-            component: dataGrid
-        }).then(function () {
-            doc.setPage(1);
-            doc.setTextColor('#808080');
-            doc.setFontSize(12);
-            doc.text(20, 10, 'Usuario: ' + vLoggedUser + '    Fecha: ' + dateToString(vHoy), null, 0);
-            doc.save("Marcas.pdf");
+        reportPopup.show();
+        $('#divReporte').html("");
+
+        $.ajax({
+            url: vUrl
+        }).done(function (data) {
+            $('#divReporte').html(data);
         });
     }
 </script>

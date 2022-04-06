@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DevExpress.AspNetCore;
+using DevExpress.AspNetCore.Reporting;
 
 namespace BusquedasRPI
 {
@@ -22,6 +24,17 @@ namespace BusquedasRPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDevExpressControls();
+
+            services
+            .AddMvc()
+            .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+            services.ConfigureReportingServices(configurator => {
+                configurator.ConfigureWebDocumentViewer(viewerConfigurator => {
+                    viewerConfigurator.UseCachedReportSourceBuilder();
+                });
+            });
+
             // Add framework services.
             services
                 .AddControllersWithViews()
@@ -31,6 +44,8 @@ namespace BusquedasRPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseDevExpressControls();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -38,7 +53,9 @@ namespace BusquedasRPI
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

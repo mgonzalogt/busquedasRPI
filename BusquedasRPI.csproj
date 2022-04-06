@@ -5,19 +5,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Reporte\_reporte_.vsrepx" />
+      <None Remove="Reportes\Busqueda.vsrepx" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Reporte\_reporte_.vsrepx" />
+      <EmbeddedResource Include="Reportes\Busqueda.vsrepx" />
     </ItemGroup>
 
     <ItemGroup>
+    <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="20.2.6" />
     <PackageReference Include="DevExpress.Reporting.Core" Version="20.2.6" />
     <PackageReference Include="DevExpress.Xpo" Version="20.2.6" />
     <PackageReference Include="DevExtreme.AspNet.Data" Version="2.7.1" />
     <PackageReference Include="DevExtreme.AspNet.Core" Version="20.2.6" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
       <PrivateAssets>all</PrivateAssets>
@@ -27,11 +29,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Reporte\_reporte_.cs">
-        <DependentUpon>_reporte_.vsrepx</DependentUpon>
+      <Compile Update="Reportes\Busqueda.cs">
+        <DependentUpon>Busqueda.vsrepx</DependentUpon>
       </Compile>
-      <Compile Update="Reporte\_reporte_.Designer.cs">
-        <DependentUpon>_reporte_.vsrepx</DependentUpon>
+      <Compile Update="Reportes\Busqueda.Designer.cs">
+        <DependentUpon>Busqueda.vsrepx</DependentUpon>
       </Compile>
     </ItemGroup>
 

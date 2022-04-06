@@ -28,8 +28,7 @@ namespace BusquedasRPI.Controllers
             Configuration = _configuration;
         }
 
-        [HttpGet]
-        public object SearchMarcas(DataSourceLoadOptions loadOptions, [FromQuery] String searchParams)
+        public List<Marca> DoSearchMarcas(String searchParams)
         {
             List<Marca> marcas = new();
             SearchParameter vSearchParams = JsonConvert.DeserializeObject<SearchParameter>(searchParams);
@@ -44,9 +43,9 @@ namespace BusquedasRPI.Controllers
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();
             Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
 
-            if (vSearchParams != null 
-                && vSearchParams.Text != null 
-                && vSearchParams.Text.Trim() != "" 
+            if (vSearchParams != null
+                && vSearchParams.Text != null
+                && vSearchParams.Text.Trim() != ""
                 && vSearchParams.Text.Trim().Length >= minSearchLength)
             {
                 string connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
@@ -58,7 +57,7 @@ namespace BusquedasRPI.Controllers
                     SqlCommand command = cnn.CreateCommand();
                     String classCondition = SearchFunctions.BuildClassCondition(vSearchParams.Classes);
                     SearchCondition searchCondition = SearchFunctions.BuildSearchCondition(
-                        vSearchParams.Text.Trim(), 
+                        vSearchParams.Text.Trim(),
                         vSearchParams.Type,
                         searchWordCondition,
                         searchSubstrings,
@@ -69,10 +68,10 @@ namespace BusquedasRPI.Controllers
 
                     command.CommandText = String.Format(("SELECT TOP {0} * FROM {1} B WITH (NOLOCK) " +
                         "WHERE 1=1 " +
-                        classCondition + 
-                        "AND ( " + searchCondition.Condition + ") "), 
-                        topRecordSearch, 
-                        searchTable, 
+                        classCondition +
+                        "AND ( " + searchCondition.Condition + ") "),
+                        topRecordSearch,
+                        searchTable,
                         SearchFunctions.CleanString(vSearchParams.Classes));
 
                     //Build params
@@ -125,7 +124,13 @@ namespace BusquedasRPI.Controllers
                 cnn.Close();
             }
 
-            return DataSourceLoader.Load(marcas, loadOptions);
+            return marcas;
+        }
+
+        [HttpGet]
+        public object SearchMarcas(DataSourceLoadOptions loadOptions, [FromQuery] String searchParams)
+        {
+            return DataSourceLoader.Load(this.DoSearchMarcas(searchParams), loadOptions);
         }
 
     }

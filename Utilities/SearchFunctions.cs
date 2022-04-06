@@ -82,6 +82,9 @@ namespace BusquedasRPI.Utilities
                 vReturn = startWild + CleanString(word.SearchText) + endWild;
             }
 
+            //Include no spaces word
+            vReturn = vReturn.Replace(" ", "%");
+
             return vReturn;
         }
 
@@ -290,6 +293,23 @@ namespace BusquedasRPI.Utilities
             }
         }
 
+        private static void NoSpacesWord(List<String> words, String searchField, ref Models.SearchCondition searchCondition)
+        {
+            string vNoSpaceWord = "";
+
+            foreach (var word in words)
+            {
+                vNoSpaceWord += word;
+            }
+
+            searchCondition.Condition += "OR REPLACE(" + searchField + ", ' ', '') LIKE @SearchText" + searchCondition.Words.Count.ToString() + " ";
+
+            Models.SearchWord thisWord = new();
+            thisWord.SearchText = CleanString(vNoSpaceWord);
+            thisWord.SearchReplace = false;
+            searchCondition.Words.Add(thisWord);
+        }
+
         private static Models.SearchCondition DoBuildSearchCondition(List<String> words, String searchField, String searchWordCondition, bool searchSubstrings, int minSearchLength, int minSubwordLength, String searchType, String collation)
         {
             Models.SearchCondition vReturn = new();
@@ -303,7 +323,9 @@ namespace BusquedasRPI.Utilities
                 GetNoOrthographyWords(words, searchField, searchWordCondition, minSearchLength, ref vReturn, collation);
                 //Reversas
                 GetReverseWords(words, searchField, ref vReturn);
-                //Subcadenas mayores o igual al minSearchLength
+                //No spaces
+                NoSpacesWord(words, searchField, ref vReturn);
+                //Subcadenas mayores o igual al minSubwordLength
                 if (searchSubstrings)
                 {
                     GetSubWords(words, searchField, minSubwordLength, ref vReturn);
@@ -315,6 +337,8 @@ namespace BusquedasRPI.Utilities
             {
                 //Exactas
                 GetExactWords(words, searchField, searchWordCondition, minSearchLength, ref vReturn);
+                //No spaces
+                NoSpacesWord(words, searchField, ref vReturn);
             }
 
             return vReturn;
