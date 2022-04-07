@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BusquedasRPI.Models;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
-
+using System.Web;
 using Microsoft.Extensions.Configuration;
 using BusquedasRPI.Utilities;
 using System.Data;
@@ -28,6 +26,7 @@ namespace BusquedasRPI.Controllers
         {
             List<ClasificacionNiza> clases = new();
             String vSearchText = searchText == null ? "" : searchText.Trim();
+            vSearchText = HttpUtility.UrlDecode(vSearchText);
             String tableName = Configuration.GetSection("CustomSettings").GetSection("NizaTable").Value.ToString();
             Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
             String searchCollation = Configuration.GetSection("CustomSettings").GetSection("SearchCollation").Value.ToString();

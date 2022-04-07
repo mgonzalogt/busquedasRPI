@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BusquedasRPI.Models;
-using DevExtreme.AspNet.Data;
-using DevExtreme.AspNet.Mvc;
-
+using System.Web;
 using Microsoft.Extensions.Configuration;
 using BusquedasRPI.Utilities;
 
@@ -26,7 +21,7 @@ namespace BusquedasRPI.Controllers
         public object GetMarcaByExpedienteId([FromQuery] String expedienteId)
         {
             Marca marca = new();
-
+            String vExpedienteId = HttpUtility.UrlDecode(expedienteId);
             String connetionString = ConfigurationExtensions.GetConnectionString(Configuration, "RPIBusquedas");
             String tableName = Configuration.GetSection("CustomSettings").GetSection("SearchTable").Value.ToString();
             Int32 searchTimeout = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("SearchTimeout").Value);
@@ -38,7 +33,7 @@ namespace BusquedasRPI.Controllers
             {
                 SqlCommand command = cnn.CreateCommand();
                 command.CommandText = String.Format("SELECT * FROM {0} WITH (NOLOCK) WHERE ExpedienteId = @ExpedienteId", tableName);
-                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.NVarChar).Value = SearchFunctions.CleanString(expedienteId).Replace("-", "");
+                command.Parameters.Add("@ExpedienteId", System.Data.SqlDbType.NVarChar).Value = SearchFunctions.CleanString(vExpedienteId).Replace("-", "");
 
                 //Set timeout
                 command.CommandTimeout = searchTimeout;

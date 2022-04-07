@@ -78,7 +78,7 @@
                     .Controller("ClasificacionNiza")
                     .LoadAction("GetClasificacion")
                     .Key("Id")
-                    .LoadParams(new { searchText = new JS("function() { return $('#fldSearchTextDetalle').val() }") })
+                    .LoadParams(new { searchText = new JS("function() { return encodeURIComponent($('#fldSearchTextDetalle').val()) }") })
                 )
                 .ShowBorders(true)
                 .Selection(s => {
@@ -373,7 +373,7 @@
         vReturn.WildCriteria = $('#CriteriaType').val();
         vReturn.Text = $('#fldSearchText').val();
 
-        return JSON.stringify(vReturn);
+        return encodeURIComponent(JSON.stringify(vReturn));
     }
 
     function validateSearch() {
@@ -464,7 +464,7 @@
         if (vExpedienteId != "") {
             $.ajax({
                 type: "Get",
-                url: "/Expediente/GetMarcaByExpedienteId?expedienteId=" + vExpedienteId,
+                url: "/Expediente/GetMarcaByExpedienteId?expedienteId=" + encodeURIComponent(vExpedienteId),
                 success: function (data) {
                     if (data && data.Id) {
                         var vDenominacion = String(data.Denominacion).trim();
@@ -521,7 +521,7 @@
         const vUrl = '@Url.Action("Reporte","Home")?usuario=' + vLoggedUser + '&searchParams=' + getSearchParameters();
 
         reportPopup.show();
-        $('#divReporte').html("");
+        $('#divReporte').html("Cargando reporte...");
 
         $.ajax({
             url: vUrl

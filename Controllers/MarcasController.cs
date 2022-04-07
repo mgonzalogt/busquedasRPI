@@ -1,16 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BusquedasRPI.Models;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
-
+using System.Web;
 using System.Data;
 using System.Data.SqlClient;
-
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using BusquedasRPI.Utilities;
@@ -31,7 +27,8 @@ namespace BusquedasRPI.Controllers
         public List<Marca> DoSearchMarcas(String searchParams)
         {
             List<Marca> marcas = new();
-            SearchParameter vSearchParams = JsonConvert.DeserializeObject<SearchParameter>(searchParams);
+            String vSearchParmasText = HttpUtility.UrlDecode(searchParams);
+            SearchParameter vSearchParams = JsonConvert.DeserializeObject<SearchParameter>(vSearchParmasText);
             String searchTable = Configuration.GetSection("CustomSettings").GetSection("SearchTable").Value.ToString();
             Int32 minSearchLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSearchLength").Value);
             Int32 minSubwordLength = Int32.Parse(Configuration.GetSection("CustomSettings").GetSection("MinSubwordLength").Value);

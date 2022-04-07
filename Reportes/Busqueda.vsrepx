@@ -4,8 +4,8 @@
     <Item1 Ref="2" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
   <Parameters>
-    <Item1 Ref="4" Description="usuario" Name="usuario" />
-    <Item2 Ref="5" Description="textoBuscado" Name="textoBuscado" />
+    <Item1 Ref="4" Visible="false" Description="usuario" Name="usuario" />
+    <Item2 Ref="5" Visible="false" Description="textoBuscado" Name="textoBuscado" />
   </Parameters>
   <Bands>
     <Item1 Ref="6" ControlType="TopMarginBand" Name="TopMargin" HeightF="27" />
@@ -135,7 +135,7 @@
           </ExpressionBindings>
           <StylePriority Ref="62" UseFont="false" UseForeColor="false" />
         </Item3>
-        <Item4 Ref="63" ControlType="XRLabel" Name="label5" Multiline="true" Text="Tipo:" SizeF="100,15.7083206" LocationFloat="10.0000067,25" Font="Arial, 8pt" ForeColor="255,85,85,85" Padding="2,2,0,0,96">
+        <Item4 Ref="63" ControlType="XRLabel" Name="label5" Multiline="true" Text="Tipo:" SizeF="100,15.7083206" LocationFloat="10.0000067,25" Font="Arial, 8pt" ForeColor="255,85,85,85" Padding="2,2,0,0,100">
           <StylePriority Ref="64" UseFont="false" UseForeColor="false" />
         </Item4>
         <Item5 Ref="65" ControlType="XRTable" Name="table4" SizeF="766.999939,25" LocationFloat="3.81469727E-06,0" OddStyleName="DetailData3_Odd">
